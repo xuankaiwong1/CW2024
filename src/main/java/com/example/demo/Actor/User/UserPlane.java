@@ -19,15 +19,21 @@ public class UserPlane extends FighterPlane {
 	private static final int VELOCITY = 12;
 	private static final int PROJECTILE_X_POSITION_OFFSET = 120;
 	private static final int PROJECTILE_Y_POSITION_OFFSET = -20;
+	private static final int BLINK_INTERVAL = 250;
+	private static final int BLINK_DURATION = 2000;
+	private static final int TOTAL_BLINKS = 4;
+
 	private int verticalVelocityMultiplier;
 	private int horizontalVelocityMultiplier;
 	private int numberOfKills;
 	private Timeline firingTimeline;
+	private boolean isInvincible;
 
 	public UserPlane(int initialHealth) {
 		super(IMAGE_NAME, IMAGE_HEIGHT, INITIAL_X_POSITION, INITIAL_Y_POSITION, initialHealth);
 		verticalVelocityMultiplier = 0;
 		horizontalVelocityMultiplier = 0;
+		isInvincible = false;
 		initializeFiringTimeline();
 	}
 
@@ -49,15 +55,15 @@ public class UserPlane extends FighterPlane {
 		if (isMoving()) {
 			double initialTranslateY = getTranslateY();
 			double initialTranslateX = getTranslateX();
-			this.moveVertically(VELOCITY * verticalVelocityMultiplier);
-			this.moveHorizontally(VELOCITY * horizontalVelocityMultiplier);
+			moveVertically(VELOCITY * verticalVelocityMultiplier);
+			moveHorizontally(VELOCITY * horizontalVelocityMultiplier);
 			double newYPosition = getLayoutY() + getTranslateY();
 			double newXPosition = getLayoutX() + getTranslateX();
 			if (newYPosition < Y_UPPER_BOUND || newYPosition > Y_LOWER_BOUND) {
-				this.setTranslateY(initialTranslateY);
+				setTranslateY(initialTranslateY);
 			}
 			if (newXPosition < X_LEFT_BOUND || newXPosition > X_RIGHT_BOUND) {
-				this.setTranslateX(initialTranslateX);
+				setTranslateX(initialTranslateX);
 			}
 		}
 	}
@@ -106,5 +112,46 @@ public class UserPlane extends FighterPlane {
 
 	public void incrementKillCount() {
 		numberOfKills++;
+	}
+
+	@Override
+	public void takeDamage() {
+		if (!isInvincible) {
+			super.takeDamage();
+			if (getHealth() > 0) {
+				startBlinking();
+				setActorCollisionEnabled(false, BLINK_DURATION);
+			}
+		}
+	}
+
+	private void startBlinking() {
+		isInvincible = true;
+		Timeline blinkTimeline = new Timeline();
+		for (int i = 0; i < TOTAL_BLINKS * 2; i++) {
+			blinkTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * BLINK_INTERVAL), e -> setVisible(!isVisible())));
+		}
+		blinkTimeline.setOnFinished(e -> {
+			setVisible(true);
+			isInvincible = false;
+		});
+		blinkTimeline.play();
+	}
+
+	public void setActorCollisionEnabled(boolean enabled, int durationMs) {
+		getCollisionComponent().SetActorCollisionEnable(enabled);
+		if (!enabled) {
+			new Timeline(new KeyFrame(Duration.millis(durationMs), event -> getCollisionComponent().SetActorCollisionEnable(true))).play();
+		}
+	}
+
+	private CollisionComponent getCollisionComponent() {
+		return new CollisionComponent();
+	}
+
+	private static class CollisionComponent {
+		void SetActorCollisionEnable(boolean enabled) {
+			// Implement collision enabling/disabling logic
+		}
 	}
 }

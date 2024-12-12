@@ -9,8 +9,8 @@ import javafx.util.Duration;
 public class UserPlane extends FighterPlane {
 
 	private static final String IMAGE_NAME = "userplane.png";
-	private static final double Y_UPPER_BOUND = -40;
-	private static final double Y_LOWER_BOUND = 600.0;
+	private static final double Y_UPPER_BOUND = 0;
+	private static final double Y_LOWER_BOUND = 695.0;
 	private static final double X_LEFT_BOUND = 0.0;
 	private static final double X_RIGHT_BOUND = 1200.0;
 	private static final double INITIAL_X_POSITION = 5.0;
@@ -59,11 +59,19 @@ public class UserPlane extends FighterPlane {
 			moveHorizontally(VELOCITY * horizontalVelocityMultiplier);
 			double newYPosition = getLayoutY() + getTranslateY();
 			double newXPosition = getLayoutX() + getTranslateX();
-			if (newYPosition < Y_UPPER_BOUND || newYPosition > Y_LOWER_BOUND) {
-				setTranslateY(initialTranslateY);
+
+			// Constrain the Y position within bounds
+			if (newYPosition < Y_UPPER_BOUND) {
+				setTranslateY(Y_UPPER_BOUND - getLayoutY());
+			} else if (newYPosition > Y_LOWER_BOUND) {
+				setTranslateY(Y_LOWER_BOUND - getLayoutY());
 			}
-			if (newXPosition < X_LEFT_BOUND || newXPosition > X_RIGHT_BOUND) {
-				setTranslateX(initialTranslateX);
+
+			// Constrain the X position within bounds
+			if (newXPosition < X_LEFT_BOUND) {
+				setTranslateX(X_LEFT_BOUND - getLayoutX());
+			} else if (newXPosition > X_RIGHT_BOUND) {
+				setTranslateX(X_RIGHT_BOUND - getLayoutX());
 			}
 		}
 	}

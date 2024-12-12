@@ -1,17 +1,23 @@
-package com.example.demo;
+package com.example.demo.Level;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.example.demo.Actor.ActiveActorDestructible;
+import com.example.demo.Actor.FighterPlane;
+import com.example.demo.Actor.User.UserPlane;
 import javafx.animation.*;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.util.Duration;
+import javafx.stage.Stage;
+import javafx.scene.media.MediaPlayer;
+import com.example.demo.Screen.SettingsScreen;
+import com.example.demo.Screen.MainMenu;
 
-public abstract class LevelParent extends Observable {
+public abstract class LevelParent {
 
 	private static final double SCREEN_HEIGHT_ADJUSTMENT = 150;
 	private static final int MILLISECOND_DELAY = 50;
@@ -29,11 +35,19 @@ public abstract class LevelParent extends Observable {
 	private final List<ActiveActorDestructible> enemyUnits;
 	private final List<ActiveActorDestructible> userProjectiles;
 	private final List<ActiveActorDestructible> enemyProjectiles;
-	
+	private static final long PROJECTILE_COOLDOWN = 120;
+
 	private int currentNumberOfEnemies;
 	private LevelView levelView;
 
-	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth, int playerInitialHealth) {
+	private final Set<KeyCode> activeKeys = new HashSet<>();
+	private long lastFiredProjectile = 0;
+	private boolean isGamePaused;
+
+	protected final Stage stage;
+	protected final MediaPlayer mediaPlayer;
+
+	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth, int playerInitialHealth, Stage stage, MediaPlayer mediaPlayer) {
 		this.root = new Group();
 		this.scene = new Scene(root, screenWidth, screenHeight);
 		this.timeline = new Timeline();
@@ -49,6 +63,8 @@ public abstract class LevelParent extends Observable {
 		this.enemyMaximumYPosition = screenHeight - SCREEN_HEIGHT_ADJUSTMENT;
 		this.levelView = instantiateLevelView();
 		this.currentNumberOfEnemies = 0;
+		this.stage = stage;
+		this.mediaPlayer = mediaPlayer;
 		initializeTimeline();
 		friendlyUnits.add(user);
 	}
@@ -71,26 +87,42 @@ public abstract class LevelParent extends Observable {
 	public void startGame() {
 		background.requestFocus();
 		timeline.play();
+		isGamePaused = false;
+	}
+
+	public void pauseGame() {
+		if (!isGamePaused) {
+			timeline.pause();
+			isGamePaused = true;
+		}
+		else {
+			timeline.play();
+			isGamePaused = false;
+		}
+	}
+
+	public void pauseMenu() {
+
 	}
 
 	public void goToNextLevel(String levelName) {
-		setChanged();
-		notifyObservers(levelName);
+		// Notify observers about level change
 	}
 
 	private void updateScene() {
-		spawnEnemyUnits();
-		updateActors();
-		generateEnemyFire();
-		updateNumberOfEnemies();
-		handleEnemyPenetration();
-		handleUserProjectileCollisions();
-		handleEnemyProjectileCollisions();
-		handlePlaneCollisions();
-		removeAllDestroyedActors();
-		updateKillCount();
-		updateLevelView();
-		checkIfGameOver();
+			spawnEnemyUnits();
+			updateActors();
+			generateEnemyFire();
+			updateNumberOfEnemies();
+			handleKeyPress();
+			handleEnemyPenetration();
+			handleUserProjectileCollisions();
+			handleEnemyProjectileCollisions();
+			handlePlaneCollisions();
+			removeAllDestroyedActors();
+			updateKillCount();
+			updateLevelView();
+			checkIfGameOver();
 	}
 
 	private void initializeTimeline() {
@@ -103,21 +135,34 @@ public abstract class LevelParent extends Observable {
 		background.setFocusTraversable(true);
 		background.setFitHeight(screenHeight);
 		background.setFitWidth(screenWidth);
-		background.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent e) {
-				KeyCode kc = e.getCode();
-				if (kc == KeyCode.UP) user.moveUp();
-				if (kc == KeyCode.DOWN) user.moveDown();
-				if (kc == KeyCode.SPACE) fireProjectile();
-			}
+		background.setOnKeyPressed(e -> {
+			KeyCode kc = e.getCode();
+			activeKeys.add(kc);
+
+			if (kc == KeyCode.ESCAPE) pauseGame();
 		});
-		background.setOnKeyReleased(new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent e) {
-				KeyCode kc = e.getCode();
-				if (kc == KeyCode.UP || kc == KeyCode.DOWN) user.stop();
-			}
+		background.setOnKeyReleased(e -> {
+			KeyCode kc = e.getCode();
+			activeKeys.remove(kc);
+			if (kc == KeyCode.W || kc == KeyCode.S) user.stopVertical();
+			if (kc == KeyCode.A || kc == KeyCode.D) user.stopHorizontal();
 		});
 		root.getChildren().add(background);
+	}
+
+	private void handleKeyPress() {
+		if (activeKeys.contains(KeyCode.W)) user.moveUp();
+		if (activeKeys.contains(KeyCode.S)) user.moveDown();
+		if (activeKeys.contains(KeyCode.A)) user.moveLeft();
+		if (activeKeys.contains(KeyCode.D)) user.moveRight();
+		if (activeKeys.contains(KeyCode.SPACE))
+		{
+			long currentTime = System.currentTimeMillis();
+			if (currentTime - lastFiredProjectile> PROJECTILE_COOLDOWN) {
+				fireProjectile();
+				lastFiredProjectile = currentTime;
+			}
+		}
 	}
 
 	private void fireProjectile() {
@@ -152,7 +197,7 @@ public abstract class LevelParent extends Observable {
 	}
 
 	private void removeDestroyedActors(List<ActiveActorDestructible> actors) {
-		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(actor -> actor.isDestroyed())
+		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(ActiveActorDestructible::isDestroyed)
 				.collect(Collectors.toList());
 		root.getChildren().removeAll(destroyedActors);
 		actors.removeAll(destroyedActors);
@@ -170,8 +215,7 @@ public abstract class LevelParent extends Observable {
 		handleCollisions(enemyProjectiles, friendlyUnits);
 	}
 
-	private void handleCollisions(List<ActiveActorDestructible> actors1,
-			List<ActiveActorDestructible> actors2) {
+	private void handleCollisions(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
 		for (ActiveActorDestructible actor : actors2) {
 			for (ActiveActorDestructible otherActor : actors1) {
 				if (actor.getBoundsInParent().intersects(otherActor.getBoundsInParent())) {
@@ -207,12 +251,10 @@ public abstract class LevelParent extends Observable {
 
 	protected void winGame() {
 		timeline.stop();
-		levelView.showWinImage();
 	}
 
 	protected void loseGame() {
 		timeline.stop();
-		levelView.showGameOverImage();
 	}
 
 	protected UserPlane getUser() {
@@ -240,6 +282,10 @@ public abstract class LevelParent extends Observable {
 		return screenWidth;
 	}
 
+	protected double getScreenHeight() {
+		return screenHeight;
+	}
+
 	protected boolean userIsDestroyed() {
 		return user.isDestroyed();
 	}
@@ -248,4 +294,38 @@ public abstract class LevelParent extends Observable {
 		currentNumberOfEnemies = enemyUnits.size();
 	}
 
+	// Method to resume the game
+	private void resumeGame() {
+		timeline.play();
+	}
+
+	// Method to restart the game (implementation depends on your game logic)
+	private void restartGame() {
+		// Restart game logic here
+		// For example, you might want to reset the game state and start the game again
+		timeline.stop();
+		// Reset game state (e.g., clear enemies, reset player health, etc.)
+		// Reinitialize the game
+		initializeScene();
+		startGame();
+	}
+
+	// Method to quit the game (implementation depends on your game logic)
+	private void quitGame() {
+		// Quit game logic here
+		// For example, you might want to close the application or go back to the main menu
+		System.exit(0); // This will close the application
+	}
+
+	// Method to show settings screen
+	private void showSettings() {
+		SettingsScreen settingsScreen = new SettingsScreen(stage, mediaPlayer);
+		settingsScreen.show();
+	}
+
+	// Method to return to main menu
+	private void returnToMainMenu() {
+		MainMenu mainMenu = new MainMenu();
+		mainMenu.start(stage);
+	}
 }

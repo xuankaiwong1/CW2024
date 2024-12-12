@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.media.MediaPlayer;
+import com.example.demo.Level.LevelParent;
 
 public class SettingsScreen {
 
@@ -22,10 +23,14 @@ public class SettingsScreen {
 
     private final Stage stage;
     private final MediaPlayer mediaPlayer;
+    private final Scene previousScene;
+    private final LevelParent levelParent; // Add this line
 
-    public SettingsScreen(Stage stage, MediaPlayer mediaPlayer) {
+    public SettingsScreen(Stage stage, MediaPlayer mediaPlayer, Scene previousScene, LevelParent levelParent) { // Modify constructor
         this.stage = stage;
         this.mediaPlayer = mediaPlayer;
+        this.previousScene = previousScene;
+        this.levelParent = levelParent; // Initialize levelParent
     }
 
     public void show() {
@@ -72,11 +77,18 @@ public class SettingsScreen {
         fireLabel.setFont(Font.font("Arial", 18));
         fireLabel.setStyle("-fx-text-fill: black;");
 
-        Button backButton = new Button("Back to Main Menu");
-        styleButton(backButton);
-        backButton.setOnAction(e -> showMainMenu());
+        Label pauseLabel = new Label("Pause: ESC");
+        pauseLabel.setFont(Font.font("Arial", 18));
+        pauseLabel.setStyle("-fx-text-fill: black;");
 
-        VBox settingsBox = new VBox(20, titleLabel, spacer, volumeLabel, volumeSlider, keyBindingsLabel, moveUpLabel, moveLeftLabel, moveDownLabel, moveRightLabel, fireLabel, backButton);
+        Button backButton = new Button("Back ♪"); // Change button text
+        styleButton(backButton);
+        backButton.setOnAction(e -> {
+            stage.setScene(previousScene);
+            levelParent.resumeGameFromSettings(); // Resume the game
+        });
+
+        VBox settingsBox = new VBox(20, titleLabel, spacer, volumeLabel, volumeSlider, keyBindingsLabel, moveUpLabel, moveLeftLabel, moveDownLabel, moveRightLabel, pauseLabel, backButton);
         settingsBox.setStyle("-fx-alignment: center; -fx-padding: 20;");
 
         StackPane root = new StackPane(background, settingsBox);
@@ -85,11 +97,6 @@ public class SettingsScreen {
         stage.setTitle("Sky Battle - Settings");
         stage.setScene(scene);
         stage.show();
-    }
-
-    private void showMainMenu() {
-        MainMenu mainMenu = new MainMenu();
-        mainMenu.start(stage);
     }
 
     private ImageView createBackground() {

@@ -1,6 +1,6 @@
 package com.example.demo.Screen;
 
-import com.example.demo.controller.Controller;
+import com.example.demo.Level.LevelParent;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -83,7 +83,8 @@ public class MainMenu extends Application {
     }
 
     private void showSettings() {
-        SettingsScreen settingsScreen = new SettingsScreen(stage, mediaPlayer);
+        Scene currentScene = stage.getScene(); // Get the current scene
+        SettingsScreen settingsScreen = new SettingsScreen(stage, mediaPlayer, currentScene, null); // Pass the current scene and null for LevelParent
         settingsScreen.show();
     }
 

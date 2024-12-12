@@ -4,6 +4,7 @@ import com.example.demo.Image.GameOverImage;
 import com.example.demo.Image.WinImage;
 import com.example.demo.Actor.Enemy.Boss;
 import com.example.demo.Screen.LevelSelection;
+import com.example.demo.Screen.MainMenu; // Add this import statement
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -65,6 +66,7 @@ public class LevelThree extends LevelParent {
     protected void winGame() {
         super.winGame();
         displayWinScreen(screenHeight, screenWidth);
+        levelComplete(); // Notify that the level is complete
     }
 
     @Override
@@ -132,8 +134,8 @@ public class LevelThree extends LevelParent {
     }
 
     private void returnToMainMenu() {
-        LevelSelection levelSelection = new LevelSelection(stage, mediaPlayer);
-        levelSelection.show();
+        MainMenu mainMenu = new MainMenu();
+        mainMenu.start(stage);
     }
 
     private void restartGame() {

@@ -22,7 +22,7 @@ public class LevelTwo extends LevelParent {
 
 	private static final String BACKGROUND_IMAGE_NAME = "/com/example/demo/images/background2.png";
 	private static final int TOTAL_ENEMIES = 5;
-	private static final int KILLS_TO_ADVANCE = 20;
+	private static final int KILLS_TO_ADVANCE = 27;
 	private static final double ENEMY_SPAWN_PROBABILITY = 0.20;
 	private static final int PLAYER_INITIAL_HEALTH = 5;
 
@@ -55,7 +55,7 @@ public class LevelTwo extends LevelParent {
 		for (int i = 0; i < TOTAL_ENEMIES - currentNumberOfEnemies; i++) {
 			if (Math.random() < ENEMY_SPAWN_PROBABILITY) {
 				double newEnemyInitialYPosition = Math.random() * getEnemyMaximumYPosition();
-				ActiveActorDestructible newEnemy; // Declare the variable outside the if-else block
+				ActiveActorDestructible newEnemy;
 
 				if (Math.random() < 0.4) {
 					newEnemy = new ElitePlane(getScreenWidth(), newEnemyInitialYPosition);
@@ -63,7 +63,7 @@ public class LevelTwo extends LevelParent {
 					newEnemy = new EnemyPlane(getScreenWidth(), newEnemyInitialYPosition);
 				}
 
-				addEnemyUnit(newEnemy); // Use the variable here
+				addEnemyUnit(newEnemy);
 			}
 		}
 	}
@@ -82,6 +82,7 @@ public class LevelTwo extends LevelParent {
 		super.winGame();
 		GameState.getInstance().setLevelTwoCompleted(true);
 		displayWinScreen(screenHeight, screenWidth);
+		levelComplete(); // Notify that the level is complete
 	}
 
 	@Override

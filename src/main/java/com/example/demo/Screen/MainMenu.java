@@ -88,7 +88,7 @@ public class MainMenu extends Application {
     private void showMainMenu() {
         ImageView background = createBackground();
 
-        Label titleLabel = new Label("Sky Battle ♪");
+        Label titleLabel = new Label("Sky Battle. ♪");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 48));
         titleLabel.setStyle("-fx-text-fill: black;");
 

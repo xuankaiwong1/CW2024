@@ -26,8 +26,8 @@ public class ElitePlane extends FighterPlane {
     public ActiveActorDestructible fireProjectile() {
         if (Math.random() < FIRE_RATE) {
             double projectileXPosition = getProjectileXPosition(PROJECTILE_X_POSITION_OFFSET);
-            double projectileYPostion = getProjectileYPosition(PROJECTILE_Y_POSITION_OFFSET);
-            return new EliteProjectile(projectileXPosition, projectileYPostion);
+            double projectileYPosition = getProjectileYPosition(PROJECTILE_Y_POSITION_OFFSET);
+            return new EliteProjectile(projectileXPosition, projectileYPosition);
         }
         return null;
     }

@@ -15,6 +15,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.media.MediaPlayer;
 import com.example.demo.Level.LevelParent;
 
+import java.util.Objects;
+
 public class SettingsScreen {
 
     private static final int SCREEN_WIDTH = 1300;
@@ -24,13 +26,13 @@ public class SettingsScreen {
     private final Stage stage;
     private final MediaPlayer mediaPlayer;
     private final Scene previousScene;
-    private final LevelParent levelParent; // Add this line
+    private final LevelParent levelParent;
 
-    public SettingsScreen(Stage stage, MediaPlayer mediaPlayer, Scene previousScene, LevelParent levelParent) { // Modify constructor
+    public SettingsScreen(Stage stage, MediaPlayer mediaPlayer, Scene previousScene, LevelParent levelParent) {
         this.stage = stage;
         this.mediaPlayer = mediaPlayer;
         this.previousScene = previousScene;
-        this.levelParent = levelParent; // Initialize levelParent
+        this.levelParent = levelParent;
     }
 
     public void show() {
@@ -41,7 +43,7 @@ public class SettingsScreen {
         titleLabel.setStyle("-fx-text-fill: black;");
 
         Region spacer = new Region();
-        spacer.setMinHeight(20); // Add space between the title and the volume label
+        spacer.setMinHeight(20);
 
         Label volumeLabel = new Label("Volume ♪");
         volumeLabel.setFont(Font.font("Arial", 24));
@@ -49,9 +51,7 @@ public class SettingsScreen {
 
         Slider volumeSlider = new Slider(0, 1, mediaPlayer.getVolume());
         volumeSlider.setMaxWidth(200);
-        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            mediaPlayer.setVolume(newValue.doubleValue());
-        });
+        volumeSlider.valueProperty().addListener((_, _, newValue) -> mediaPlayer.setVolume(newValue.doubleValue()));
 
         Label keyBindingsLabel = new Label("\nKey Bindings ♪");
         keyBindingsLabel.setFont(Font.font("Arial", 24));
@@ -81,11 +81,11 @@ public class SettingsScreen {
         pauseLabel.setFont(Font.font("Arial", 18));
         pauseLabel.setStyle("-fx-text-fill: black;");
 
-        Button backButton = new Button("Back ♪"); // Change button text
+        Button backButton = new Button("Back ♪");
         styleButton(backButton);
-        backButton.setOnAction(e -> {
+        backButton.setOnAction(_ -> {
             stage.setScene(previousScene);
-            levelParent.resumeGameFromSettings(); // Resume the game
+            levelParent.resumeGameFromSettings();
         });
 
         VBox settingsBox = new VBox(20, titleLabel, spacer, volumeLabel, volumeSlider, keyBindingsLabel, moveUpLabel, moveLeftLabel, moveDownLabel, moveRightLabel, pauseLabel, backButton);
@@ -101,7 +101,7 @@ public class SettingsScreen {
 
     private ImageView createBackground() {
         try {
-            Image backgroundImage = new Image(getClass().getResource(BACKGROUND_IMAGE_PATH).toExternalForm());
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResource(BACKGROUND_IMAGE_PATH)).toExternalForm());
             ImageView background = new ImageView(backgroundImage);
             background.setFitWidth(SCREEN_WIDTH);
             background.setFitHeight(SCREEN_HEIGHT);
@@ -116,9 +116,9 @@ public class SettingsScreen {
         button.setPrefSize(200, 50);
         button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #333333; -fx-text-fill: white; " +
+        button.setOnMouseEntered(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #333333; -fx-text-fill: white; " +
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
+        button.setOnMouseExited(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
     }
 }

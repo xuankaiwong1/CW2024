@@ -17,15 +17,6 @@ public class Controller {
 		this.mediaPlayer = mediaPlayer;
 	}
 
-	public void launchGame() {
-		System.out.println("Game launched!");
-		LevelOne levelOne = new LevelOne(750, 1300, stage, mediaPlayer);
-		Scene scene = levelOne.initializeScene();
-		stage.setScene(scene);
-		stage.show();
-		levelOne.startGame();
-	}
-
 	public void launchLevelOne() {
 		System.out.println("Launching com.example.demo.Level One...");
 		LevelOne levelOne = new LevelOne(750, 1300, stage, mediaPlayer);

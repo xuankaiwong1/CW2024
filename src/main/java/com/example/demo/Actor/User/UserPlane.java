@@ -26,8 +26,7 @@ public class UserPlane extends FighterPlane {
 	private int verticalVelocityMultiplier;
 	private int horizontalVelocityMultiplier;
 	private int numberOfKills;
-	private Timeline firingTimeline;
-	private boolean isInvincible;
+    private boolean isInvincible;
 
 	public UserPlane(int initialHealth) {
 		super(IMAGE_NAME, IMAGE_HEIGHT, INITIAL_X_POSITION, INITIAL_Y_POSITION, initialHealth);
@@ -38,24 +37,14 @@ public class UserPlane extends FighterPlane {
 	}
 
 	private void initializeFiringTimeline() {
-		firingTimeline = new Timeline(new KeyFrame(Duration.millis(200), e -> fireProjectile()));
+        Timeline firingTimeline = new Timeline(new KeyFrame(Duration.millis(200), _ -> fireProjectile()));
 		firingTimeline.setCycleCount(Timeline.INDEFINITE);
-	}
-
-	public void startFiring() {
-		firingTimeline.play();
-	}
-
-	public void stopFiring() {
-		firingTimeline.stop();
 	}
 
 	@Override
 	public void updatePosition() {
 		if (isMoving()) {
-			double initialTranslateY = getTranslateY();
-			double initialTranslateX = getTranslateX();
-			moveVertically(VELOCITY * verticalVelocityMultiplier);
+            moveVertically(VELOCITY * verticalVelocityMultiplier);
 			moveHorizontally(VELOCITY * horizontalVelocityMultiplier);
 			double newYPosition = getLayoutY() + getTranslateY();
 			double newXPosition = getLayoutX() + getTranslateX();
@@ -137,9 +126,9 @@ public class UserPlane extends FighterPlane {
 		isInvincible = true;
 		Timeline blinkTimeline = new Timeline();
 		for (int i = 0; i < TOTAL_BLINKS * 2; i++) {
-			blinkTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * BLINK_INTERVAL), e -> setVisible(!isVisible())));
+			blinkTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * BLINK_INTERVAL), _ -> setVisible(!isVisible())));
 		}
-		blinkTimeline.setOnFinished(e -> {
+		blinkTimeline.setOnFinished(_ -> {
 			setVisible(true);
 			isInvincible = false;
 		});
@@ -147,9 +136,9 @@ public class UserPlane extends FighterPlane {
 	}
 
 	public void setActorCollisionEnabled(boolean enabled, int durationMs) {
-		getCollisionComponent().SetActorCollisionEnable(enabled);
+		getCollisionComponent().SetActorCollisionEnable();
 		if (!enabled) {
-			new Timeline(new KeyFrame(Duration.millis(durationMs), event -> getCollisionComponent().SetActorCollisionEnable(true))).play();
+			new Timeline(new KeyFrame(Duration.millis(durationMs), _ -> getCollisionComponent().SetActorCollisionEnable())).play();
 		}
 	}
 
@@ -158,7 +147,7 @@ public class UserPlane extends FighterPlane {
 	}
 
 	private static class CollisionComponent {
-		void SetActorCollisionEnable(boolean enabled) {
+		void SetActorCollisionEnable() {
 			// Implement collision enabling/disabling logic
 		}
 	}

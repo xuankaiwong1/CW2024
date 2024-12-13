@@ -33,8 +33,4 @@ public class GameState {
         this.levelTwoCompleted = levelTwoCompleted;
     }
 
-    public void reset() {
-        levelOneCompleted = false;
-        levelTwoCompleted = false;
-    }
 }

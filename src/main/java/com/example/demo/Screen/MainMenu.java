@@ -1,6 +1,5 @@
 package com.example.demo.Screen;
 
-import com.example.demo.Level.LevelParent;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,6 +14,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+
+import java.util.Objects;
 
 public class MainMenu extends Application {
 
@@ -35,7 +36,7 @@ public class MainMenu extends Application {
 
     private void playBackgroundMusic() {
         if (mediaPlayer == null) {
-            Media media = new Media(getClass().getResource(AUDIO_PATH).toExternalForm());
+            Media media = new Media(Objects.requireNonNull(getClass().getResource(AUDIO_PATH)).toExternalForm());
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.play();
@@ -90,7 +91,7 @@ public class MainMenu extends Application {
 
     private ImageView createBackground() {
         try {
-            Image backgroundImage = new Image(getClass().getResource(BACKGROUND_IMAGE_PATH).toExternalForm());
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResource(BACKGROUND_IMAGE_PATH)).toExternalForm());
             ImageView background = new ImageView(backgroundImage);
             background.setFitWidth(SCREEN_WIDTH);
             background.setFitHeight(SCREEN_HEIGHT);

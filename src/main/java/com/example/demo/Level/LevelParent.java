@@ -47,7 +47,7 @@ public abstract class LevelParent {
 	private static final long PROJECTILE_COOLDOWN = 120;
 
 	private int currentNumberOfEnemies;
-	private LevelView levelView;
+	private final LevelView levelView;
 
 	private final Set<KeyCode> activeKeys = new HashSet<>();
 	private long lastFiredProjectile = 0;
@@ -110,7 +110,7 @@ public abstract class LevelParent {
 
 	private void initializeTimeline() {
 		timeline.setCycleCount(Timeline.INDEFINITE);
-		KeyFrame gameLoop = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> updateScene());
+		KeyFrame gameLoop = new KeyFrame(Duration.millis(MILLISECOND_DELAY), _ -> updateScene());
 		timeline.getKeyFrames().add(gameLoop);
 	}
 
@@ -265,10 +265,6 @@ public abstract class LevelParent {
 		return screenWidth;
 	}
 
-	protected double getScreenHeight() {
-		return screenHeight;
-	}
-
 	protected boolean userIsDestroyed() {
 		return user.isDestroyed();
 	}
@@ -337,23 +333,23 @@ public abstract class LevelParent {
 		overlay.heightProperty().bind(scene.heightProperty());
 
 		// Create pause menu buttons
-		Button resumeButton = createStyledButton("Continue", e -> {
+		Button resumeButton = createStyledButton("Resume", _ -> {
 			resumeGameFromSettings();
 			hidePauseMenu();
 		});
-		Button restartButton = createStyledButton("Restart", e -> {
+		Button restartButton = createStyledButton("Restart", _ -> {
 			restartGame();
 			hidePauseMenu();
 		});
-		Button settingsButton = createStyledButton("Settings", e -> {
+		Button settingsButton = createStyledButton("Settings", _ -> {
 			showSettings();
 			hidePauseMenu();
 		});
-		Button mainMenuButton = createStyledButton("Main Menu", e -> {
+		Button mainMenuButton = createStyledButton("Main Menu", _ -> {
 			returnToMainMenu();
 			hidePauseMenu();
 		});
-		Button quitButton = createStyledButton("Quit", e -> {
+		Button quitButton = createStyledButton("Quit", _ -> {
 			quitGame();
 		});
 
@@ -391,9 +387,9 @@ public abstract class LevelParent {
 		button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
 				"-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
 		button.setOnAction(eventHandler);
-		button.setOnMouseEntered(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #ff69b4; -fx-text-fill: black; " +
+		button.setOnMouseEntered(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #ff69b4; -fx-text-fill: black; " +
 				"-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-		button.setOnMouseExited(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
+		button.setOnMouseExited(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
 				"-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
 		return button;
 	}

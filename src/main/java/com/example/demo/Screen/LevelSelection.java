@@ -17,6 +17,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.media.MediaPlayer;
 
+import java.util.Objects;
+
 public class LevelSelection {
 
     private static final int SCREEN_WIDTH = 1300;
@@ -34,22 +36,22 @@ public class LevelSelection {
     public void show() {
         ImageView background = createBackground();
 
-        Label titleLabel = createLabel("Select Level ♪", 36, FontWeight.BOLD);
+        Label titleLabel = createLabel();
         titleLabel.setStyle("-fx-text-fill: black;");
 
         Region spacer1 = new Region();
         spacer1.setMinHeight(20); // Add space between the title and the level 1 button
 
-        Button levelOneButton = createButton("Level 1", e -> startLevelOne());
-        Button levelTwoButton = createButton("Level 2", e -> startLevelTwo());
+        Button levelOneButton = createButton("Level 1", _ -> startLevelOne());
+        Button levelTwoButton = createButton("Level 2", _ -> startLevelTwo());
         levelTwoButton.setDisable(!GameState.getInstance().isLevelOneCompleted()); // Disable if level 1 not completed
-        Button levelThreeButton = createButton("Level 3", e -> startLevelThree());
+        Button levelThreeButton = createButton("Level 3", _ -> startLevelThree());
         levelThreeButton.setDisable(!GameState.getInstance().isLevelTwoCompleted()); // Disable if level 2 not completed
 
         Region spacer2 = new Region();
         spacer2.setMinHeight(20);
 
-        Button backButton = createButton("Back to Main Menu", e -> showMainMenu());
+        Button backButton = createButton("Back to Main Menu", _ -> showMainMenu());
 
         VBox levelSelectionBox = new VBox(20, titleLabel, spacer1, levelOneButton, levelTwoButton, levelThreeButton, spacer2, backButton);
         levelSelectionBox.setStyle("-fx-alignment: center; -fx-padding: 20;");
@@ -81,7 +83,7 @@ public class LevelSelection {
 
     private ImageView createBackground() {
         try {
-            Image backgroundImage = new Image(getClass().getResource(BACKGROUND_IMAGE_PATH).toExternalForm());
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResource(BACKGROUND_IMAGE_PATH)).toExternalForm());
             ImageView background = new ImageView(backgroundImage);
             background.setFitWidth(SCREEN_WIDTH);
             background.setFitHeight(SCREEN_HEIGHT);
@@ -96,9 +98,9 @@ public class LevelSelection {
         button.setPrefSize(200, 50);
         button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #333333; -fx-text-fill: white; " +
+        button.setOnMouseEntered(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #333333; -fx-text-fill: white; " +
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
+        button.setOnMouseExited(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
     }
 
@@ -109,9 +111,9 @@ public class LevelSelection {
         return button;
     }
 
-    private Label createLabel(String text, int fontSize, FontWeight fontWeight) {
-        Label label = new Label(text);
-        label.setFont(Font.font("Arial", fontWeight, fontSize));
+    private Label createLabel() {
+        Label label = new Label("Select Level ♪");
+        label.setFont(Font.font("Arial", FontWeight.BOLD, 36));
         label.setStyle("-fx-text-fill: white;");
         return label;
     }

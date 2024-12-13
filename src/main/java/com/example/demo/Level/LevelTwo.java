@@ -26,8 +26,8 @@ public class LevelTwo extends LevelParent {
 	private static final double ENEMY_SPAWN_PROBABILITY = 0.20;
 	private static final int PLAYER_INITIAL_HEALTH = 5;
 
-	private double screenHeight;
-	private double screenWidth;
+	private final double screenHeight;
+	private final double screenWidth;
 
 	public LevelTwo(double screenHeight, double screenWidth, Stage stage, MediaPlayer mediaPlayer) {
 		super(BACKGROUND_IMAGE_NAME, screenHeight, screenWidth, PLAYER_INITIAL_HEALTH, stage, mediaPlayer);
@@ -102,8 +102,8 @@ public class LevelTwo extends LevelParent {
 		winImage.showWinImage();
 
 		// Create buttons
-		Button mainMenuButton = createStyledButton("Return to Main Menu", e -> returnToMainMenu());
-		Button nextLevelButton = createStyledButton("Next Level ♪", e -> startNextLevel());
+		Button mainMenuButton = createStyledButton("Return to Main Menu", _ -> returnToMainMenu());
+		Button nextLevelButton = createStyledButton("Next Level ♪", _ -> startNextLevel());
 
 		// Layout for buttons
 		HBox buttonLayout = new HBox(20, mainMenuButton, nextLevelButton);
@@ -131,8 +131,8 @@ public class LevelTwo extends LevelParent {
 		GameOverImage gameOverImage = new GameOverImage(screenWidth / 2 - 350, screenHeight / 2 - 300);
 
 		// Create buttons
-		Button mainMenuButton = createStyledButton("Return to Main Menu", e -> returnToMainMenu());
-		Button restartButton = createStyledButton("Restart Game ♪", e -> restartGame());
+		Button mainMenuButton = createStyledButton("Return to Main Menu", _ -> returnToMainMenu());
+		Button restartButton = createStyledButton("Restart Game ♪", _ -> restartGame());
 
 		// Layout for buttons
 		HBox buttonLayout = new HBox(20, mainMenuButton, restartButton);
@@ -182,9 +182,9 @@ public class LevelTwo extends LevelParent {
 		button.setPrefSize(200, 50);
 		button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
 				"-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-		button.setOnMouseEntered(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #ff69b4; -fx-text-fill: black; " +
+		button.setOnMouseEntered(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #ff69b4; -fx-text-fill: black; " +
 				"-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-		button.setOnMouseExited(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
+		button.setOnMouseExited(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
 				"-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
 	}
 }

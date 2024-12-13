@@ -3,7 +3,6 @@ package com.example.demo.Level;
 import com.example.demo.Image.GameOverImage;
 import com.example.demo.Image.WinImage;
 import com.example.demo.Actor.Enemy.Boss;
-import com.example.demo.Screen.LevelSelection;
 import com.example.demo.Screen.MainMenu; // Add this import statement
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,10 +21,9 @@ public class LevelThree extends LevelParent {
     private static final String BACKGROUND_IMAGE_NAME = "/com/example/demo/images/background3.png";
     private static final int PLAYER_INITIAL_HEALTH = 5;
     private final Boss boss;
-    private LevelViewLevelTwo levelView;
 
-    private double screenHeight;
-    private double screenWidth;
+    private final double screenHeight;
+    private final double screenWidth;
 
     public LevelThree(double screenHeight, double screenWidth, Stage stage, MediaPlayer mediaPlayer) {
         super(BACKGROUND_IMAGE_NAME, screenHeight, screenWidth, PLAYER_INITIAL_HEALTH, stage, mediaPlayer);
@@ -58,8 +56,7 @@ public class LevelThree extends LevelParent {
 
     @Override
     protected LevelView instantiateLevelView() {
-        levelView = new LevelViewLevelTwo(getRoot(), PLAYER_INITIAL_HEALTH);
-        return levelView;
+        return new LevelViewLevelTwo(getRoot(), PLAYER_INITIAL_HEALTH);
     }
 
     @Override
@@ -86,7 +83,7 @@ public class LevelThree extends LevelParent {
         winImage.showWinImage();
 
         // Create buttons
-        Button mainMenuButton = createStyledButton("Return to Main Menu", e -> returnToMainMenu());
+        Button mainMenuButton = createStyledButton("Return to Main Menu", _ -> returnToMainMenu());
 
         // Layout for buttons
         HBox buttonLayout = new HBox(20, mainMenuButton);
@@ -114,8 +111,8 @@ public class LevelThree extends LevelParent {
         GameOverImage gameOverImage = new GameOverImage(screenWidth / 2 - 350, screenHeight / 2 - 300);
 
         // Create buttons
-        Button mainMenuButton = createStyledButton("Return to Main Menu", e -> returnToMainMenu());
-        Button restartButton = createStyledButton("Restart Game ♪", e -> restartGame());
+        Button mainMenuButton = createStyledButton("Return to Main Menu", _ -> returnToMainMenu());
+        Button restartButton = createStyledButton("Restart Game ♪", _ -> restartGame());
 
         // Layout for buttons
         HBox buttonLayout = new HBox(20, mainMenuButton, restartButton);
@@ -156,9 +153,9 @@ public class LevelThree extends LevelParent {
         button.setPrefSize(200, 50);
         button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
                 "-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #ff69b4; -fx-text-fill: black; " +
+        button.setOnMouseEntered(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: #ff69b4; -fx-text-fill: black; " +
                 "-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
+        button.setOnMouseExited(_ -> button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +
                 "-fx-border-color: pink; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
     }
 }

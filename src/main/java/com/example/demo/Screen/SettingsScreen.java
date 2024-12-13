@@ -17,6 +17,30 @@ import com.example.demo.Level.LevelParent;
 
 import java.util.Objects;
 
+/**
+ * The SettingsScreen class represents the settings screen of the game. It provides an interface
+ * for adjusting game settings, including volume control and key bindings.
+ *
+ * The settings screen includes:
+ * <ul>
+ *     <li>A volume slider to adjust the game music volume.</li>
+ *     <li>Labels displaying the current key bindings for game actions such as moving and firing.</li>
+ *     <li>A "Back" button to return to the previous scene.</li>
+ * </ul>
+ *
+ * Constructor:
+ * <ul>
+ *     <li>{@link #SettingsScreen(Stage, MediaPlayer, Scene, LevelParent)}: Initializes the settings screen with the necessary
+ *     references to the stage, media player, previous scene, and level parent.</li>
+ * </ul>
+ *
+ * Methods:
+ * <ul>
+ *     <li>{@link #show()}: Displays the settings screen with volume control, key bindings, and the back button.</li>
+ *     <li>{@link #createBackground()}: Creates and returns an ImageView for the background image.</li>
+ *     <li>{@link #styleButton(Button)}: Styles the buttons with a consistent look and hover effect.</li>
+ * </ul>
+ */
 public class SettingsScreen {
 
     private static final int SCREEN_WIDTH = 1300;
@@ -28,6 +52,15 @@ public class SettingsScreen {
     private final Scene previousScene;
     private final LevelParent levelParent;
 
+    /**
+     * Constructs a SettingsScreen object with the necessary references to stage, media player,
+     * previous scene, and level parent.
+     *
+     * @param stage the primary stage for the settings screen.
+     * @param mediaPlayer the MediaPlayer used for controlling the background music volume.
+     * @param previousScene the previous scene that will be restored when the user presses "Back."
+     * @param levelParent the LevelParent object used for resuming the game from settings.
+     */
     public SettingsScreen(Stage stage, MediaPlayer mediaPlayer, Scene previousScene, LevelParent levelParent) {
         this.stage = stage;
         this.mediaPlayer = mediaPlayer;
@@ -35,6 +68,9 @@ public class SettingsScreen {
         this.levelParent = levelParent;
     }
 
+    /**
+     * Displays the settings screen with volume control, key bindings, and a back button.
+     */
     public void show() {
         ImageView background = createBackground();
 
@@ -99,6 +135,11 @@ public class SettingsScreen {
         stage.show();
     }
 
+    /**
+     * Creates and returns an ImageView for the background image.
+     *
+     * @return the ImageView with the background image.
+     */
     private ImageView createBackground() {
         try {
             Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResource(BACKGROUND_IMAGE_PATH)).toExternalForm());
@@ -112,6 +153,11 @@ public class SettingsScreen {
         }
     }
 
+    /**
+     * Styles the buttons with a consistent look, including a hover effect.
+     *
+     * @param button the button to be styled.
+     */
     private void styleButton(Button button) {
         button.setPrefSize(200, 50);
         button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +

@@ -16,6 +16,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.media.MediaPlayer;
 
+/**
+ * Represents Level Three of the game, extending the LevelParent class.
+ * This level introduces a boss enemy and implements the logic for winning and losing the game.
+ */
 public class LevelThree extends LevelParent {
 
     private static final String BACKGROUND_IMAGE_NAME = "/com/example/demo/images/background3.png";
@@ -25,6 +29,14 @@ public class LevelThree extends LevelParent {
     private final double screenHeight;
     private final double screenWidth;
 
+    /**
+     * Constructor for LevelThree. Initializes the level with specified screen size, stage, and media player.
+     *
+     * @param screenHeight The height of the screen.
+     * @param screenWidth The width of the screen.
+     * @param stage The JavaFX stage for displaying the scene.
+     * @param mediaPlayer The media player for background music.
+     */
     public LevelThree(double screenHeight, double screenWidth, Stage stage, MediaPlayer mediaPlayer) {
         super(BACKGROUND_IMAGE_NAME, screenHeight, screenWidth, PLAYER_INITIAL_HEALTH, stage, mediaPlayer);
         this.screenHeight = screenHeight;
@@ -32,11 +44,18 @@ public class LevelThree extends LevelParent {
         boss = new Boss();
     }
 
+    /**
+     * Initializes the friendly units, adding the user (player) to the root node.
+     */
     @Override
     protected void initializeFriendlyUnits() {
         getRoot().getChildren().add(getUser());
     }
 
+    /**
+     * Checks if the game is over. If the player is destroyed, the game is lost.
+     * If the boss is destroyed, the game is won.
+     */
     @Override
     protected void checkIfGameOver() {
         if (userIsDestroyed()) {
@@ -46,6 +65,9 @@ public class LevelThree extends LevelParent {
         }
     }
 
+    /**
+     * Spawns the enemy units. If there are no enemies, the boss is added to the level.
+     */
     @Override
     protected void spawnEnemyUnits() {
         if (getCurrentNumberOfEnemies() == 0) {
@@ -54,11 +76,19 @@ public class LevelThree extends LevelParent {
         }
     }
 
+    /**
+     * Instantiates and returns the level view for Level Three.
+     *
+     * @return A LevelView object for Level Three.
+     */
     @Override
     protected LevelView instantiateLevelView() {
-        return new LevelViewLevelTwo(getRoot(), PLAYER_INITIAL_HEALTH);
+        return new LevelViewLevelThree(getRoot(), PLAYER_INITIAL_HEALTH);
     }
 
+    /**
+     * Handles winning the game by displaying the win screen and completing the level.
+     */
     @Override
     protected void winGame() {
         super.winGame();
@@ -66,12 +96,21 @@ public class LevelThree extends LevelParent {
         levelComplete(); // Notify that the level is complete
     }
 
+    /**
+     * Handles losing the game by displaying the game over screen.
+     */
     @Override
     protected void loseGame() {
         super.loseGame();
         displayGameOverScreen(screenHeight, screenWidth);
     }
 
+    /**
+     * Displays the win screen with a win image and a button to return to the main menu.
+     *
+     * @param screenHeight The height of the screen.
+     * @param screenWidth The width of the screen.
+     */
     private void displayWinScreen(double screenHeight, double screenWidth) {
         // Create a dark overlay
         Rectangle overlay = new Rectangle(screenWidth, screenHeight);
@@ -101,6 +140,12 @@ public class LevelThree extends LevelParent {
         getRoot().getChildren().add(winPane);
     }
 
+    /**
+     * Displays the game over screen with a "Game Over" image and buttons to return to the main menu or restart the game.
+     *
+     * @param screenHeight The height of the screen.
+     * @param screenWidth The width of the screen.
+     */
     private void displayGameOverScreen(double screenHeight, double screenWidth) {
         // Create a dark overlay
         Rectangle overlay = new Rectangle(screenWidth, screenHeight);
@@ -130,11 +175,17 @@ public class LevelThree extends LevelParent {
         getRoot().getChildren().add(gameOverPane);
     }
 
+    /**
+     * Returns to the main menu by starting the MainMenu screen.
+     */
     private void returnToMainMenu() {
         MainMenu mainMenu = new MainMenu();
         mainMenu.start(stage);
     }
 
+    /**
+     * Restarts the game by creating a new instance of LevelThree and setting the scene.
+     */
     private void restartGame() {
         LevelThree levelThree = new LevelThree(screenHeight, screenWidth, stage, mediaPlayer);
         Scene scene = levelThree.initializeScene();
@@ -142,6 +193,13 @@ public class LevelThree extends LevelParent {
         levelThree.startGame();
     }
 
+    /**
+     * Creates and styles a button with the given text and event handler.
+     *
+     * @param text The text to display on the button.
+     * @param eventHandler The event handler to attach to the button.
+     * @return A styled Button object.
+     */
     private Button createStyledButton(String text, EventHandler<ActionEvent> eventHandler) {
         Button button = new Button(text);
         styleButton(button);
@@ -149,6 +207,11 @@ public class LevelThree extends LevelParent {
         return button;
     }
 
+    /**
+     * Applies style to a button, including size, color, and hover effects.
+     *
+     * @param button The button to style.
+     */
     private void styleButton(Button button) {
         button.setPrefSize(200, 50);
         button.setStyle("-fx-font-size: 18px; -fx-background-color: pink; -fx-text-fill: black; " +

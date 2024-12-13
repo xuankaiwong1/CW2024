@@ -26,6 +26,23 @@ import javafx.scene.media.MediaPlayer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+/**
+ * The abstract parent class for managing a game level, including user and enemy actions,
+ * projectiles, and collisions. It defines the game loop, handles input, updates actors, and
+ * manages the game state, such as pausing and resuming the game. The level background, scene,
+ * and actors (both friendly and enemy) are also handled within this class.
+ *
+ * <p>The class provides the basic structure for a game level, with methods to initialize
+ * the game scene, start the game, update the actors, handle collisions, and fire projectiles.</p>
+ *
+ * <p>Subclasses must implement methods to define the specific behavior of the level, including
+ * spawning enemy units, checking for game over conditions, and creating a level view.</p>
+ *
+ * @see ActiveActorDestructible
+ * @see UserPlane
+ * @see FighterPlane
+ * @see LevelView
+ */
 public abstract class LevelParent {
 
 	private static final double SCREEN_HEIGHT_ADJUSTMENT = 150;
@@ -63,7 +80,20 @@ public abstract class LevelParent {
 
 	private Runnable onLevelComplete;
 
-	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth, int playerInitialHealth, Stage stage, MediaPlayer mediaPlayer) {
+	/**
+	 * Constructs a LevelParent object to initialize the level with the specified parameters.
+	 * This includes setting up the background, scene, actors (user, friendly units, enemy units),
+	 * and game loop. The pause menu and game state are also initialized.
+	 *
+	 * @param backgroundImageName The name of the background image to be displayed for the level.
+	 * @param screenHeight        The height of the game screen.
+	 * @param screenWidth         The width of the game screen.
+	 * @param playerInitialHealth The initial health of the player.
+	 * @param stage               The primary stage for displaying the game scene.
+	 * @param mediaPlayer         The media player for playing sound or music during the game.
+	 */
+	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth,
+					   int playerInitialHealth, Stage stage, MediaPlayer mediaPlayer) {
 		this.root = new Group();
 		this.scene = new Scene(root, screenWidth, screenHeight);
 		this.timeline = new Timeline();
@@ -87,14 +117,33 @@ public abstract class LevelParent {
 		initializePauseMenu();
 	}
 
+	/**
+	 * Abstract method to initialize the friendly units (e.g., the player's units).
+	 */
 	protected abstract void initializeFriendlyUnits();
 
+	/**
+	 * Abstract method to check if the game is over, based on the current game state.
+	 */
 	protected abstract void checkIfGameOver();
 
+	/**
+	 * Abstract method to spawn enemy units for the level.
+	 */
 	protected abstract void spawnEnemyUnits();
 
+	/**
+	 * Abstract method to instantiate and return the level view (e.g., the UI components for the level).
+	 *
+	 * @return The LevelView instance for the current level.
+	 */
 	protected abstract LevelView instantiateLevelView();
 
+	/**
+	 * Initializes the scene for the level by setting up the background and friendly units.
+	 *
+	 * @return The Scene object representing the game level.
+	 */
 	public Scene initializeScene() {
 		initializeBackground();
 		initializeFriendlyUnits();
@@ -102,6 +151,9 @@ public abstract class LevelParent {
 		return scene;
 	}
 
+	/**
+	 * Starts the game by playing the timeline and setting the game as not paused.
+	 */
 	public void startGame() {
 		background.requestFocus();
 		timeline.play();
@@ -133,6 +185,9 @@ public abstract class LevelParent {
 		root.getChildren().add(background);
 	}
 
+	/**
+	 * Handles key press events to move the user plane and fire projectiles.
+	 */
 	private void handleKeyPress() {
 		if (activeKeys.contains(KeyCode.W)) user.moveUp();
 		if (activeKeys.contains(KeyCode.S)) user.moveDown();
@@ -198,6 +253,13 @@ public abstract class LevelParent {
 		handleCollisions(enemyProjectiles, friendlyUnits);
 	}
 
+	/**
+	 * Handles collisions between two sets of actors (e.g., friendly units and enemy units).
+	 * If any two actors intersect, they both take damage.
+	 *
+	 * @param actors1 The first list of actors (e.g., user projectiles).
+	 * @param actors2 The second list of actors (e.g., enemy units).
+	 */
 	private void handleCollisions(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
 		for (ActiveActorDestructible actor : actors2) {
 			for (ActiveActorDestructible otherActor : actors1) {
@@ -209,6 +271,10 @@ public abstract class LevelParent {
 		}
 	}
 
+	/**
+	 * Checks if any enemy unit has penetrated the player's defenses. If so, the player takes damage
+	 * and the enemy unit is destroyed.
+	 */
 	private void handleEnemyPenetration() {
 		for (ActiveActorDestructible enemy : enemyUnits) {
 			if (enemyHasPenetratedDefenses(enemy)) {
@@ -218,68 +284,128 @@ public abstract class LevelParent {
 		}
 	}
 
+	/**
+	 * Updates the level view, such as removing hearts when the player's health decreases.
+	 */
 	private void updateLevelView() {
 		levelView.removeHearts(user.getHealth());
 	}
 
+	/**
+	 * Updates the kill count based on how many enemies have been destroyed since the last update.
+	 */
 	private void updateKillCount() {
 		for (int i = 0; i < currentNumberOfEnemies - enemyUnits.size(); i++) {
 			user.incrementKillCount();
 		}
 	}
 
+	/**
+	 * Determines if the given enemy has penetrated the player's defenses (e.g., crossed the screen width).
+	 *
+	 * @param enemy The enemy unit to check.
+	 * @return True if the enemy has crossed the screen's edge; otherwise, false.
+	 */
 	private boolean enemyHasPenetratedDefenses(ActiveActorDestructible enemy) {
 		return Math.abs(enemy.getTranslateX()) > screenWidth;
 	}
 
+	/**
+	 * Ends the game and stops the game loop, indicating the player has won.
+	 */
 	protected void winGame() {
 		timeline.stop();
 	}
 
+	/**
+	 * Ends the game and stops the game loop, indicating the player has lost.
+	 */
 	protected void loseGame() {
 		timeline.stop();
 	}
 
+	/**
+	 * Returns the user plane (the player's main unit).
+	 *
+	 * @return The user's plane.
+	 */
 	protected UserPlane getUser() {
 		return user;
 	}
 
+	/**
+	 * Returns the root group that holds all visual elements of the level.
+	 *
+	 * @return The root group of the level.
+	 */
 	protected Group getRoot() {
 		return root;
 	}
 
+	/**
+	 * Returns the current number of active enemy units in the level.
+	 *
+	 * @return The number of active enemy units.
+	 */
 	protected int getCurrentNumberOfEnemies() {
 		return enemyUnits.size();
 	}
 
+	/**
+	 * Adds a new enemy unit to the level.
+	 *
+	 * @param enemy The enemy unit to be added.
+	 */
 	protected void addEnemyUnit(ActiveActorDestructible enemy) {
 		enemyUnits.add(enemy);
 		root.getChildren().add(enemy);
 	}
 
+	/**
+	 * Returns the maximum Y position for enemy units on the screen.
+	 *
+	 * @return The maximum Y position for enemies.
+	 */
 	protected double getEnemyMaximumYPosition() {
 		return enemyMaximumYPosition;
 	}
 
+	/**
+	 * Returns the width of the game screen.
+	 *
+	 * @return The width of the screen.
+	 */
 	protected double getScreenWidth() {
 		return screenWidth;
 	}
 
+	/**
+	 * Checks if the user plane has been destroyed.
+	 *
+	 * @return True if the user plane is destroyed; otherwise, false.
+	 */
 	protected boolean userIsDestroyed() {
 		return user.isDestroyed();
 	}
 
+	/**
+	 * Updates the current number of active enemy units in the level.
+	 */
 	private void updateNumberOfEnemies() {
 		currentNumberOfEnemies = enemyUnits.size();
 	}
 
-	// Method to resume the game
+	/**
+	 * Resumes the game from the settings menu, if paused.
+	 */
 	public void resumeGameFromSettings() {
 		isGamePaused = false;
 		timeline.play();
 	}
 
-	// Method to restart the game
+	/**
+	 * Restarts the game by stopping the timeline, hiding the pause menu, and reinitializing the current level.
+	 */
 	private void restartGame() {
 		timeline.stop();
 		hidePauseMenu();
@@ -299,36 +425,49 @@ public abstract class LevelParent {
 			e.printStackTrace();
 		}
 	}
-	// Method to get the current level class
+
+	/**
+	 * Returns the class of the current level.
+	 *
+	 * @return The class of the current level.
+	 */
 	protected Class<? extends LevelParent> getCurrentLevelClass() {
 		return this.getClass();
 	}
 
-	// Method to quit the game
+	/**
+	 * Quits the game and closes the application.
+	 */
 	private void quitGame() {
-		System.exit(0); // This will close the application
+		System.exit(0);
 	}
 
-	// Method to show settings screen
+	/**
+	 * Displays the settings screen for adjusting game options.
+	 */
 	private void showSettings() {
 		Scene currentScene = stage.getScene(); // Get the current scene
 		SettingsScreen settingsScreen = new SettingsScreen(stage, mediaPlayer, currentScene, this); // Pass the current scene and this instance
 		settingsScreen.show();
 	}
 
-	// Method to return to main menu
+	/**
+	 * Returns to the main menu from the current level.
+	 */
 	private void returnToMainMenu() {
 		MainMenu mainMenu = new MainMenu();
 		mainMenu.start(stage);
 	}
 
-	// Pause menu initialization
+	/**
+	 * Initializes the pause menu with buttons for resuming the game, restarting the game,
+	 * adjusting settings, returning to the main menu, and quitting the game.
+	 */
 	private void initializePauseMenu() {
 		// Create a semi-transparent black overlay and bind its size to the scene
 		overlay = new Rectangle();
 		overlay.setFill(Color.rgb(0, 0, 0, 0.5));
 		overlay.setVisible(false);
-		// Bind overlay size to scene size
 		overlay.widthProperty().bind(scene.widthProperty());
 		overlay.heightProperty().bind(scene.heightProperty());
 
@@ -366,21 +505,31 @@ public abstract class LevelParent {
 		root.getChildren().add(pausePane);
 	}
 
-	// Method to show the pause menu
+	/**
+	 * Shows the pause menu overlay, allowing the player to resume or restart the game.
+	 */
 	private void showPauseMenu() {
 		overlay.setVisible(true);
 		pauseMenu.setVisible(true);
-		pausePane.toFront(); // Ensure the entire pausePane is in front
+		pausePane.toFront();
 		pauseMenu.requestFocus();
 	}
 
-	// Method to hide the pause menu
+	/**
+	 * Hides the pause menu overlay and buttons.
+	 */
 	private void hidePauseMenu() {
 		overlay.setVisible(false);
 		pauseMenu.setVisible(false);
 	}
 
-	// Method to create a styled button
+	/**
+	 * Creates a styled button with the specified text and action event.
+	 *
+	 * @param text         The text to display on the button.
+	 * @param eventHandler The action event to trigger when the button is pressed.
+	 * @return The styled button.
+	 */
 	private Button createStyledButton(String text, EventHandler<ActionEvent> eventHandler) {
 		Button button = new Button(text);
 		button.setPrefSize(200, 50);
@@ -394,7 +543,10 @@ public abstract class LevelParent {
 		return button;
 	}
 
-	// Method to pause the game
+	/**
+	 * Pauses or unpauses the game depending on the current state.
+	 * If the game is paused, it will resume; if the game is running, it will pause.
+	 */
 	public void pauseGame() {
 		if (!isGamePaused) {
 			timeline.pause();
@@ -407,18 +559,28 @@ public abstract class LevelParent {
 		}
 	}
 
-	// Method to set the level complete callback
+	/**
+	 * Sets the callback to be executed when the level is completed.
+	 *
+	 * @param onLevelComplete The callback to execute when the level is complete.
+	 */
 	public void setOnLevelComplete(Runnable onLevelComplete) {
 		this.onLevelComplete = onLevelComplete;
 	}
 
-	// Method to notify that the level is complete
+	/**
+	 * Notifies that the level is complete and triggers the onLevelComplete callback.
+	 */
 	protected void levelComplete() {
 		if (onLevelComplete != null) {
 			onLevelComplete.run();
 		}
 	}
 
+	/**
+	 * The game loop that updates the level's state, including spawning enemies, updating actors,
+	 * handling collisions, and checking for game-over conditions.
+	 */
 	private void updateScene() {
 		spawnEnemyUnits();
 		updateActors();

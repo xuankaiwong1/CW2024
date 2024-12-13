@@ -17,6 +17,34 @@ import javafx.scene.media.MediaPlayer;
 
 import java.util.Objects;
 
+/**
+ * The MainMenu class represents the main menu screen of the game. It provides the user interface
+ * to start the game, adjust settings, or exit the game. The main menu also includes a background image
+ * and plays background music while the menu is displayed.
+ *
+ * The screen includes:
+ * <ul>
+ *     <li>A title label with the game's name ("Sky Battle ♪").</li>
+ *     <li>Buttons for starting the game, accessing settings, and exiting the game.</li>
+ *     <li>A background image that is displayed behind the buttons.</li>
+ * </ul>
+ *
+ * Constructor:
+ * <ul>
+ *     <li>{@link MainMenu}: Initializes the main menu with the background music and visual elements.</li>
+ * </ul>
+ *
+ * Methods:
+ * <ul>
+ *     <li>{@link #start(Stage)}: Initializes the stage and starts playing background music.</li>
+ *     <li>{@link #playBackgroundMusic()}: Plays background music (if not already playing) on a loop.</li>
+ *     <li>{@link #showMainMenu()}: Displays the main menu with buttons for starting the game, settings, and exiting.</li>
+ *     <li>{@link #showLevelSelection()}: Navigates to the level selection screen when the "Start Game" button is pressed.</li>
+ *     <li>{@link #showSettings()}: Navigates to the settings screen when the "Settings" button is pressed.</li>
+ *     <li>{@link #createBackground()}: Creates and returns an ImageView for the background image.</li>
+ *     <li>{@link #styleButton(Button)}: Styles the buttons with a consistent look and hover effect.</li>
+ * </ul>
+ */
 public class MainMenu extends Application {
 
     private static final int SCREEN_WIDTH = 1300;
@@ -27,6 +55,11 @@ public class MainMenu extends Application {
     private static MediaPlayer mediaPlayer;
     private Stage stage;
 
+    /**
+     * Starts the main menu screen by initializing the stage and playing background music.
+     *
+     * @param primaryStage the primary stage for the main menu scene.
+     */
     @Override
     public void start(Stage primaryStage) {
         this.stage = primaryStage;
@@ -34,6 +67,10 @@ public class MainMenu extends Application {
         showMainMenu();
     }
 
+    /**
+     * Plays the background music. If the music is not already playing, it will start from the beginning.
+     * The music is set to loop indefinitely.
+     */
     private void playBackgroundMusic() {
         if (mediaPlayer == null) {
             Media media = new Media(Objects.requireNonNull(getClass().getResource(AUDIO_PATH)).toExternalForm());
@@ -45,6 +82,9 @@ public class MainMenu extends Application {
         }
     }
 
+    /**
+     * Displays the main menu screen with the title, buttons for starting the game, accessing settings, and exiting.
+     */
     private void showMainMenu() {
         ImageView background = createBackground();
 
@@ -78,17 +118,28 @@ public class MainMenu extends Application {
         stage.show();
     }
 
+    /**
+     * Navigates to the level selection screen when the "Start Game" button is pressed.
+     */
     private void showLevelSelection() {
         LevelSelection levelSelection = new LevelSelection(stage, mediaPlayer);
         levelSelection.show();
     }
 
+    /**
+     * Navigates to the settings screen when the "Settings" button is pressed.
+     */
     private void showSettings() {
         Scene currentScene = stage.getScene(); // Get the current scene
         SettingsScreen settingsScreen = new SettingsScreen(stage, mediaPlayer, currentScene, null); // Pass the current scene and null for LevelParent
         settingsScreen.show();
     }
 
+    /**
+     * Creates and returns an ImageView for the background image.
+     *
+     * @return the ImageView with the background image.
+     */
     private ImageView createBackground() {
         try {
             Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResource(BACKGROUND_IMAGE_PATH)).toExternalForm());
@@ -102,6 +153,11 @@ public class MainMenu extends Application {
         }
     }
 
+    /**
+     * Styles the buttons with a consistent look, including a hover effect.
+     *
+     * @param button the button to be styled.
+     */
     private void styleButton(Button button) {
         button.setPrefSize(200, 50);
         button.setStyle("-fx-font-size: 18px; -fx-background-color: black; -fx-text-fill: white; " +
@@ -112,6 +168,11 @@ public class MainMenu extends Application {
                 "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
     }
 
+    /**
+     * The main method to launch the JavaFX application.
+     *
+     * @param args command-line arguments (unused).
+     */
     public static void main(String[] args) {
         launch();
     }

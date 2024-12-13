@@ -19,6 +19,38 @@ import javafx.scene.media.MediaPlayer;
 
 import java.util.Objects;
 
+/**
+ * The LevelSelection class provides the user interface for the level selection screen of the game.
+ * It displays buttons for selecting different levels (Level 1, Level 2, and Level 3) and
+ * navigates the user to the appropriate level based on their progress in the game.
+ *
+ * The screen includes:
+ * <ul>
+ *     <li>A title label that instructs the user to select a level.</li>
+ *     <li>Buttons for selecting Level 1, Level 2, and Level 3, with Level 2 and Level 3 buttons disabled
+ *         if the previous level has not been completed.</li>
+ *     <li>A "Back to Main Menu" button for returning to the main menu.</li>
+ *     <li>A background image for the level selection screen.</li>
+ * </ul>
+ *
+ * Constructor:
+ * <ul>
+ *     <li>{@link #LevelSelection(Stage, MediaPlayer)}: Initializes the LevelSelection screen with the stage and media player.</li>
+ * </ul>
+ *
+ * Methods:
+ * <ul>
+ *     <li>{@link #show()}: Displays the level selection screen with the title, buttons, and background image.</li>
+ *     <li>{@link #startLevelOne()}: Launches Level 1 when the Level 1 button is pressed.</li>
+ *     <li>{@link #startLevelTwo()}: Launches Level 2 when the Level 2 button is pressed.</li>
+ *     <li>{@link #startLevelThree()}: Launches Level 3 when the Level 3 button is pressed.</li>
+ *     <li>{@link #showMainMenu()}: Navigates the user back to the main menu.</li>
+ *     <li>{@link #createBackground()}: Creates and returns the background image for the level selection screen.</li>
+ *     <li>{@link #styleButton(Button)}: Styles the buttons with a consistent look.</li>
+ *     <li>{@link #createButton(String, EventHandler)}: Creates a styled button with a specified label and event handler.</li>
+ *     <li>{@link #createLabel()}: Creates and styles the title label for the level selection screen.</li>
+ * </ul>
+ */
 public class LevelSelection {
 
     private static final int SCREEN_WIDTH = 1300;
@@ -28,11 +60,20 @@ public class LevelSelection {
     private final Stage stage;
     private final Controller controller;
 
+    /**
+     * Constructs a LevelSelection instance with the given stage and media player.
+     *
+     * @param stage the stage on which the level selection screen will be displayed.
+     * @param mediaPlayer the media player for handling background music and sound effects.
+     */
     public LevelSelection(Stage stage, MediaPlayer mediaPlayer) {
         this.stage = stage;
-        this.controller = new Controller(stage, mediaPlayer); // Initialize the controller with stage and mediaPlayer
+        this.controller = new Controller(stage, mediaPlayer);
     }
 
+    /**
+     * Displays the level selection screen with title, level buttons, and a background image.
+     */
     public void show() {
         ImageView background = createBackground();
 
